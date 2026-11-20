@@ -1,0 +1,46 @@
+// POST /api/admin/sign-upload
+app.post('/api/admin/sign-upload', authenticateToken, isAdmin, (req, res) => {
+  try {
+    // 1. Validar configuración de Cloudinary
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+    const apiKey = process.env.CLOUDINARY_API_KEY;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+    console.log('[sign-upload] cloud_name:', cloudName || 'UNDEFINED');
+    console.log('[sign-upload] api_key:', apiKey ? 'DEFINIDO' : 'UNDEFINED');
+    console.log('[sign-upload] api_secret:', apiSecret ? 'DEFINIDO' : 'UNDEFINED');
+
+    if (!cloudName || !apiKey || !apiSecret) {
+      console.error('[sign-upload] Faltan variables de entorno de Cloudinary');
+      return res.status(500).json({
+        message: 'Cloudinary no está configurado en el servidor. Revisa el archivo .env.'
+      });
+    }
+
+    // 2. Calcular firma
+    const folder = (req.body.folder || 'gala/videos').trim();
+    const timestamp = Math.round(Date.now() / 1000);
+
+    const paramsToSign = { timestamp, folder };
+
+    const signature = cloudinary.utils.api_sign_request(paramsToSign, apiSecret);
+
+    console.log('[sign-upload] Firma generada:', signature);
+    console.log('[sign-upload] Params firmados:', paramsToSign);
+
+    // 3. Responder
+    res.json({
+      signature,
+      timestamp,
+      folder,
+      api_key: apiKey,
+      cloud_name: cloudName
+    });
+  } catch (err) {
+    console.error('[sign-upload] Error:', err);
+    res.status(500).json({
+      message: 'Error al generar la firma de Cloudinary.',
+      error: err.message
+    });
+  }
+});

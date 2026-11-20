@@ -1,0 +1,32 @@
+// GET /api/stage-videos/:stage
+app.get('/api/stage-videos/:stage', authenticateToken, async (req, res) => {
+  try {
+    const { stage } = req.params;
+
+    // Verificar que el usuario tenga pago aprobado para esta etapa yes
+    const [payments] = await pool.query(
+      "SELECT id FROM payments WHERE user_id = ? AND stage = ? AND status = 'aprobado'",
+      [req.user.id, stage]
+    );
+
+    if (payments.length === 0 && req.user.role !== 'admin') {
+      return res.status(403).json({ message: 'No tienes acceso a esta etapa' });
+    }
+
+    const [videos] = await pool.query(
+      'SELECT * FROM stage_videos WHERE stage = ? ORDER BY created_at DESC',
+      [stage]
+    );
+
+    res.json(videos.map(v => ({
+      id: v.id,
+      stage: v.stage,
+      title: v.title,
+      url: v.cloudinary_url,
+      publicId: v.cloudinary_public_id
+    })));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error' });
+  }
+});

@@ -1,0 +1,37 @@
+// DELETE /api/admin/stage-videos/:id
+app.delete('/api/admin/stage-videos/:id', authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // 1. Obtener los datos del vídeo (necesitamos el public_id de Cloudinary)
+    const [rows] = await pool.query('SELECT * FROM stage_videos WHERE id = ?', [id]);
+    
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'Vídeo no encontrado' });
+    }
+
+    const video = rows[0];
+    const publicId = video.cloudinary_public_id;
+
+    // 2. Eliminar de Cloudinary
+    try {
+      console.log(`Eliminando de Cloudinary: ${publicId}`);
+      await cloudinary.uploader.destroy(publicId, {
+        resource_type: 'video' // Importante para archivos de video
+      });
+    } catch (cloudErr) {
+      console.error('Error al eliminar de Cloudinary (pero se continuará con la BD):', cloudErr);
+      // No detenemos el proceso aquí, queremos limpiar la BD aunque falle la nube
+    }
+
+    // 3. Eliminar de MySQL
+    await pool.query('DELETE FROM stage_videos WHERE id = ?', [id]);
+    console.log(`Registro ${id} eliminado de la base de datos.`);
+
+    res.json({ message: 'Vídeo eliminado correctamente' });
+
+  } catch (err) {
+    console.error('Error crítico en eliminación:', err);
+    res.status(500).json({ message: 'Error al eliminar el vídeo' });
+  }
+});

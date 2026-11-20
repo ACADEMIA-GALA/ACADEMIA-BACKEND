@@ -1,0 +1,133 @@
+# ============================================================
+# .gitignore para backend Node.js + Express + MySQL + Cloudinary
+# ============================================================
+
+# ------------------------------------------------------------
+# VARIABLES DE ENTORNO (¡NUNCA subir a Git!)
+# ------------------------------------------------------------
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+.env.staging
+*.env
+.env.*
+!.env.example
+
+# ------------------------------------------------------------
+# DEPENDENCIAS
+# ------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-store/
+
+# ------------------------------------------------------------
+# ARCHIVOS DE COMPILACIÓN / BUILD
+# ------------------------------------------------------------
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+.parcel-cache/
+.tmp/
+temp/
+
+# ------------------------------------------------------------
+# ARCHIVOS SUBIDOS POR USUARIOS (capturas de Yape, etc.)
+# ------------------------------------------------------------
+uploads/
+!uploads/.gitkeep
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+*.pdf
+
+# ------------------------------------------------------------
+# LOGS
+# ------------------------------------------------------------
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ------------------------------------------------------------
+# SISTEMA OPERATIVO
+# ------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ------------------------------------------------------------
+# EDITORES / IDE
+# ------------------------------------------------------------
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json.example
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# ------------------------------------------------------------
+# CLOUDINARY / CREDENCIALES
+# ------------------------------------------------------------
+cloudinary.json
+cloudinary.config.js
+credentials.json
+serviceAccountKey.json
+secrets.json
+
+# ------------------------------------------------------------
+# BASE DE DATOS / DUMPS
+# ------------------------------------------------------------
+*.sql
+*.sqlite
+*.sqlite3
+*.db
+database.sql
+gala_db.sql
+dump.sql
+backup/
+backups/
+
+# ------------------------------------------------------------
+# COBERTURA / TESTING
+# ------------------------------------------------------------
+coverage/
+.nyc_output/
+.cache/
+*.lcov
+
+# ------------------------------------------------------------
+# PM2 / DOCKER (si los usas)
+# ------------------------------------------------------------
+.pm2/
+ecosystem.config.js.bak
+docker-compose.override.yml
+
+# ------------------------------------------------------------
+# OTROS
+# ------------------------------------------------------------
+*.bak
+*.backup
+*.orig
+.cache/
+.sass-cache/

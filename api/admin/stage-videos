@@ -1,0 +1,25 @@
+// POST /api/admin/stage-videos
+app.post('/api/admin/stage-videos', authenticateToken, isAdmin, async (req, res) => {
+  try {
+    const { stage, title, publicId, url } = req.body;
+    if (!stage || !title || !publicId || !url) {
+      return res.status(400).json({ message: 'Faltan datos' });
+    }
+
+    const [result] = await pool.query(
+      'INSERT INTO stage_videos (stage, title, cloudinary_public_id, cloudinary_url) VALUES (?, ?, ?, ?)',
+      [stage, title, publicId, url]
+    );
+
+    res.status(201).json({
+      id: result.insertId,
+      stage,
+      title,
+      url,
+      publicId
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Error' });
+  }
+});
